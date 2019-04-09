@@ -8,6 +8,7 @@ import (
 
 //export RunSo
 func RunSo() {
+	log.Println("----- Call Function From Golang So -------")
 	log.Println("Hello Run So files.... ")
 }
 
