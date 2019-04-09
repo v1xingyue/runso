@@ -34,11 +34,11 @@ void usage(){
     printf("\n");
     printf("");
     printf("# RunSo tools #\n");
-    printf("-s soname , without .so suffix \n");
-    printf("-d so path , with rigght / \n");
-    printf("-f function name to call default : RunSo . This Export Function Must be int (*SoHandler)()  \n");
+    printf("-n soname , without .so suffix \n");
+    printf("-d so path , with right / \n");
+    printf("-c function name to call default : RunSo . This Export Function Must be int (*SoHandler)()  \n");
     printf("-m call multiple so files , loop so dir \n");
-    printf("example usage:  ./runso -d ./item -s goso -f RunSo\n");
+    printf("example usage:  ./runso -d ./item -n goso -c RunSo\n");
     printf("\n");
 }
 
@@ -47,9 +47,9 @@ int main(int argc, char** argv){
     char ch;
     RunArgs.multiple = 0;
 
-    while((ch = getopt(argc, argv, "s:d:f:mh")) != -1){
+    while((ch = getopt(argc, argv, "n:d:c:mh")) != -1){
         switch(ch) {
-            case 's':
+            case 'n':
                 //printf("option s:'%s'\n", optarg);  
                 RunArgs.soname = optarg;
                 break;
@@ -57,7 +57,7 @@ int main(int argc, char** argv){
                 //printf("option d: %s \n",optarg);  
                 RunArgs.sopath = optarg;
                 break;
-            case 'f':
+            case 'c':
                 //printf("option f: %s \n",optarg);  
                 RunArgs.fname = optarg;
                 break;
