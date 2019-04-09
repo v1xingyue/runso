@@ -6,7 +6,10 @@
 #include <stdio.h>
 #include <dlfcn.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <string.h>
 
+// 运行参数定义
 struct _RunSoArgs {
     char* soname;
     char* sopath;
@@ -14,8 +17,10 @@ struct _RunSoArgs {
     int multiple;
 } RunArgs;
 
+// so 动态调用函数指针类型
 typedef int (*SoHandler)();
 
+// 动态调用指定目录下的so文件的指定函数，该导出函数，比如符合 SoHandler 类型定义
 void RunSoFn(char *so_path,char* soname,char* fn_name){
     char buffer[256];
     sprintf(buffer,"%s/%s.so",so_path,soname);
@@ -30,6 +35,7 @@ void RunSoFn(char *so_path,char* soname,char* fn_name){
     }
 }
 
+//使用简介
 void usage(){
     printf("\n");
     printf("");
@@ -42,6 +48,29 @@ void usage(){
     printf("\n");
 }
 
+void loopCallDirSo(char* path,char* fname){
+      DIR *dir;
+      struct dirent *ptr; 
+      int len = 0;
+      if((dir = opendir(path)) == NULL ){
+          printf("can't open dir pathed : %s ",path);
+          return;
+      }
+      printf("      loop dir so files , sopath : %s , call function name: %s \n",path,fname);
+      while (( ptr = readdir(dir)) != NULL){
+          if(ptr->d_type == DT_REG) {
+              len = strlen(ptr->d_name);
+              if(len>3){
+                if(ptr->d_name[len-1] == 'o' && ptr->d_name[len-2] == 's' && ptr->d_name[len-3] == '.'){
+                    RunSoFn(path,ptr->d_name,fname);
+                }
+              }
+          }
+      }
+      closedir(dir);
+}
+
+//主函数
 int main(int argc, char** argv){
 
     char ch;
@@ -71,7 +100,12 @@ int main(int argc, char** argv){
         }
     }
 
-    if(RunArgs.soname == NULL || RunArgs.sopath == NULL){
+    if(RunArgs.sopath == NULL){
+        usage();
+        return 1; 
+    }
+
+    if(RunArgs.soname == NULL && RunArgs.multiple == 0){
         usage();
         return 1; 
     }
@@ -83,10 +117,9 @@ int main(int argc, char** argv){
     if(RunArgs.multiple == 0){
         RunSoFn(RunArgs.sopath,RunArgs.soname,RunArgs.fname);
     } else {
-    
+        loopCallDirSo(RunArgs.sopath,RunArgs.fname);    
     }
 
     printf("\n");
     return 0;
 }
-
