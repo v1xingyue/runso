@@ -1,7 +1,11 @@
 package main
 
+/*
+#include "info.h"
+*/
+import "C"
+
 import (
-	"C"
 	"fmt"
 	"log"
 )
@@ -10,6 +14,7 @@ import (
 func RunSo() {
 	log.Println("----- Call Function From Golang So -------")
 	log.Println("Hello Run So files.... ")
+	C.Hello()
 }
 
 //export BoxHello
@@ -19,4 +24,5 @@ func BoxHello(message *C.char) *C.char {
 	return C.CString("this is message from golang !")
 }
 
-func main() {}
+func main() {
+}
