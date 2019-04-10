@@ -25,7 +25,7 @@ void RunSoFn(char *so_path,char* soname,char* fn_name){
     char buffer[256];
     sprintf(buffer,"%s/%s.so",so_path,soname);
     printf("   call %s from sopath: %s , so full path : %s , soname : %s\n",fn_name,so_path,buffer,soname);
-    void *so_handle=dlopen("./item/goso.so",RTLD_LAZY);
+    void *so_handle=dlopen(buffer,RTLD_LAZY);
     SoHandler sh = NULL;
     sh = dlsym(so_handle,fn_name);
     if(sh == NULL){
@@ -62,6 +62,7 @@ void loopCallDirSo(char* path,char* fname){
               len = strlen(ptr->d_name);
               if(len>3){
                 if(ptr->d_name[len-1] == 'o' && ptr->d_name[len-2] == 's' && ptr->d_name[len-3] == '.'){
+                    ptr->d_name[len-3] = '\0';
                     RunSoFn(path,ptr->d_name,fname);
                 }
               }
