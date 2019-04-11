@@ -9,6 +9,10 @@
 #include <dirent.h>
 #include <string.h>
 
+#ifndef buildnum
+#define buildnum ""
+#endif
+
 // 运行参数定义
 struct _RunSoArgs {
     char* soname;
@@ -20,12 +24,13 @@ struct _RunSoArgs {
 // so 动态调用函数指针类型
 typedef int (*SoHandler)();
 
+
 // 动态调用指定目录下的so文件的指定函数，该导出函数，比如符合 SoHandler 类型定义
 void RunSoFn(char *so_path,char* soname,char* fn_name){
     char buffer[256];
     sprintf(buffer,"%s/%s.so",so_path,soname);
-    printf("   call %s from sopath: %s , so full path : %s , soname : %s\n",fn_name,so_path,buffer,soname);
-    void *so_handle=dlopen(buffer,RTLD_LAZY);
+    printf(" \033[0;32m   call %s from sopath: %s , so full path : %s , soname : %s \033[0m  \n",fn_name,so_path,buffer,soname);
+    void *so_handle = dlopen(buffer,RTLD_LAZY);
     SoHandler sh = NULL;
     sh = dlsym(so_handle,fn_name);
     if(sh == NULL){
@@ -37,15 +42,15 @@ void RunSoFn(char *so_path,char* soname,char* fn_name){
 
 //使用简介
 void usage(){
-    printf("\n");
-    printf("");
+    printf("\n\033[0;32m");
     printf("# RunSo tools #\n");
-    printf("-n soname , without .so suffix \n");
-    printf("-d so path , with right / \n");
-    printf("-c function name to call default : RunSo . This Export Function Must be int (*SoHandler)()  \n");
-    printf("-m call multiple so files , loop so dir \n");
-    printf("example usage:  ./runso -d ./item -n goso -c RunSo\n");
-    printf("\n");
+    printf("build Number : %s \n\n",buildnum);
+    printf("-n soname , without .so suffix \n\n");
+    printf("-d so path , with right / \n\n");
+    printf("-c function name to call . \n\tdefault : RunSo . \n\tThis Export Function Must be int (*SoHandler)()  \n\n");
+    printf("-m call multiple so files , loop so dir \n\n");
+    printf("example usage:  \n\t./runso -d ./item -n goso -c RunSo\n\t./runso -d ./item -m -c RunSo\n\n");
+    printf("\033[0m\n");
 }
 
 void loopCallDirSo(char* path,char* fname){
@@ -114,6 +119,8 @@ int main(int argc, char** argv){
     if(RunArgs.fname == NULL){
         RunArgs.fname = "RunSo"; 
     }
+
+    printf("\n \033[0;32m  Start Running RunSo Code !\033[0m\n");
 
     if(RunArgs.multiple == 0){
         RunSoFn(RunArgs.sopath,RunArgs.soname,RunArgs.fname);
