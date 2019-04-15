@@ -1,8 +1,8 @@
 package main
 
 /*
-#cgo CFLAGS : -I /Users/xingyue/outcode/git/runso/common/include
-#cgo LDFLAGS : -L/Users/xingyue/outcode/git/runso/common/lib -l base
+#cgo CFLAGS : -I ../common/include
+#cgo LDFLAGS : -L ../common/lib -l base
 #include "info.h"
 */
 import "C"
