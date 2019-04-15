@@ -9,7 +9,7 @@ endif
 all: so base runso
 
 runso: runso.c
-	gcc -ldl  runso.c -o runso -D buildnum=\"`date +%Y%m%d_%H%M%S`\"
+	gcc -ldl -lbase -L./common/lib -I./common/include runso.c -o runso -D buildnum=\"`date +%Y%m%d_%H%M%S`\"
 
 test:so base runso
 	$(test_cmd)

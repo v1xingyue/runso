@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <string.h>
+#include "base.h"
 
 #ifndef buildnum
 #define buildnum ""
@@ -54,7 +55,8 @@ void usage(){
     printf("-c function name to call . \n\tdefault : RunSo . \n\tThis Export Function Must be int (*SoHandler)()  \n\n");
     printf("-m call multiple so files , loop so dir \n\n");
     printf("example usage:  \n\t./runso -d ./item -n goso -c RunSo\n\t./runso -d ./item -m -c RunSo\n\n");
-    printf("\033[0;31mYou may need set LD_LIBRARY_PATH , if you need libbase.so . \nOr You can change ld.conf.d \n ");
+    printf("\033[0;31mYou may need set LD_LIBRARY_PATH , if you need libbase.so . \nOr You can change ld.conf.d \n");
+    printf("Osx You need export : DYLD_LIBRARY_PATH \n");
 
     printf("\033[0m\n");
 }
@@ -127,6 +129,8 @@ int main(int argc, char** argv){
     }
 
     printf("\n \033[0;32m  Start Running RunSo Code !\033[0m\n");
+
+    BaseAdd();
 
     if(RunArgs.multiple == 0){
         RunSoFn(RunArgs.sopath,RunArgs.soname,RunArgs.fname);
