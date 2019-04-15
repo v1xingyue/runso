@@ -24,17 +24,21 @@ struct _RunSoArgs {
 // so 动态调用函数指针类型
 typedef int (*SoHandler)();
 
-
 // 动态调用指定目录下的so文件的指定函数，该导出函数，比如符合 SoHandler 类型定义
 void RunSoFn(char *so_path,char* soname,char* fn_name){
     char buffer[256];
     sprintf(buffer,"%s/%s.so",so_path,soname);
     printf(" \033[0;32m   call %s from sopath: %s , so full path : %s , soname : %s \033[0m  \n",fn_name,so_path,buffer,soname);
     void *so_handle = dlopen(buffer,RTLD_LAZY);
+    if(so_handle== NULL){
+        printf("--> so open error %s , ==> %s !\n",buffer,dlerror());
+        return;
+    }
     SoHandler sh = NULL;
     sh = dlsym(so_handle,fn_name);
     if(sh == NULL){
-        printf("no method found !\n");
+        printf("--> no method <%s> found , so file : %s ! \n",fn_name,soname);
+        return ;
     } else {
         sh(); 
     }
@@ -50,6 +54,8 @@ void usage(){
     printf("-c function name to call . \n\tdefault : RunSo . \n\tThis Export Function Must be int (*SoHandler)()  \n\n");
     printf("-m call multiple so files , loop so dir \n\n");
     printf("example usage:  \n\t./runso -d ./item -n goso -c RunSo\n\t./runso -d ./item -m -c RunSo\n\n");
+    printf("\033[0;31mYou may need set LD_LIBRARY_PATH , if you need libbase.so . \nOr You can change ld.conf.d \n ");
+
     printf("\033[0m\n");
 }
 
