@@ -9,8 +9,11 @@ endif
 all:
 	gcc -ldl  runso.c -o runso -D buildnum=\"`date +%Y%m%d_%H%M%S`\"
 
-test:so
+test:so base
 	$(test_cmd)
 
 so:
 	cd item ; make
+
+base:
+	cd common/base; make ; make install
