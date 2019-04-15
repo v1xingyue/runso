@@ -6,10 +6,12 @@ else
 	test_cmd = export LD_LIBRARY_PATH=./common/lib && ./runso -m -d ./item
 endif
 
-all:
+all: so base runso
+
+runso: runso.c
 	gcc -ldl  runso.c -o runso -D buildnum=\"`date +%Y%m%d_%H%M%S`\"
 
-test:so base
+test:so base runso
 	$(test_cmd)
 
 so:
