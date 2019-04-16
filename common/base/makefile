@@ -1,5 +1,5 @@
 all:
-	gcc base.c -fPIC -shared -o base.so
+	gcc base.c -fPIC -shared -o base.so -I ../include
 
 install:
 	cp base.h ../include
