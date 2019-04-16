@@ -9,7 +9,6 @@
 #include <dirent.h>
 #include <string.h>
 #include "runso.h"
-#include "base.h"
 
 void nothing(){
     printf("nothing happend here!");
