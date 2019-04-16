@@ -8,25 +8,16 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <string.h>
+#include "runso.h"
 #include "base.h"
 
-#ifndef buildnum
-#define buildnum ""
-#endif
+void nothing(){
+    printf("nothing happend here!");
+}
 
-// 运行参数定义
-struct _RunSoArgs {
-    char* soname;
-    char* sopath;
-    char* fname;
-    int multiple;
-} RunArgs;
-
-// so 动态调用函数指针类型
-typedef int (*SoHandler)();
 
 // 动态调用指定目录下的so文件的指定函数，该导出函数，比如符合 SoHandler 类型定义
-void RunSoFn(char *so_path,char* soname,char* fn_name){
+void RunSoFn(char *so_path,char* soname,char* fn_name,CallBack cb){
     char buffer[256];
     sprintf(buffer,"%s/%s.so",so_path,soname);
     printf(" \033[0;32m   call %s from sopath: %s , so full path : %s , soname : %s \033[0m  \n",fn_name,so_path,buffer,soname);
@@ -41,7 +32,11 @@ void RunSoFn(char *so_path,char* soname,char* fn_name){
         printf("--> no method <%s> found , so file : %s ! \n",fn_name,soname);
         return ;
     } else {
-        sh(); 
+        if(cb != NULL){
+            sh(cb); 
+        } else {
+            sh(); 
+        }
     }
 }
 
@@ -54,7 +49,7 @@ void usage(){
     printf("-d so path , with right / \n\n");
     printf("-c function name to call . \n\tdefault : RunSo . \n\tThis Export Function Must be int (*SoHandler)()  \n\n");
     printf("-m call multiple so files , loop so dir \n\n");
-    printf("example usage:  \n\t./runso -d ./item -n goso -c RunSo\n\t./runso -d ./item -m -c RunSo\n\n");
+    printf("example usage:  \n\t./runso -d ./item -n goso -c RunSo\n\t./runso -d ./item -m -c RunSo\n\t./runso -d ./item -c -n goso RunSoCallBack \n");
     printf("\033[0;31mYou may need set LD_LIBRARY_PATH , if you need libbase.so . \nOr You can change ld.conf.d \n");
     printf("Osx You need export : DYLD_LIBRARY_PATH \n");
 
@@ -76,7 +71,7 @@ void loopCallDirSo(char* path,char* fname){
               if(len>3){
                 if(ptr->d_name[len-1] == 'o' && ptr->d_name[len-2] == 's' && ptr->d_name[len-3] == '.'){
                     ptr->d_name[len-3] = '\0';
-                    RunSoFn(path,ptr->d_name,fname);
+                    RunSoFn(path,ptr->d_name,fname,NULL);
                 }
               }
           }
@@ -128,12 +123,14 @@ int main(int argc, char** argv){
         RunArgs.fname = "RunSo"; 
     }
 
+    PrintArgs(&RunArgs);
+
     printf("\n \033[0;32m  Start Running RunSo Code !\033[0m\n");
 
     BaseAdd();
 
     if(RunArgs.multiple == 0){
-        RunSoFn(RunArgs.sopath,RunArgs.soname,RunArgs.fname);
+        RunSoFn(RunArgs.sopath,RunArgs.soname,RunArgs.fname,nothing);
     } else {
         loopCallDirSo(RunArgs.sopath,RunArgs.fname);    
     }

@@ -16,4 +16,7 @@ struct _RunSoArgs {
 // so 动态调用函数指针类型
 typedef int (*SoHandler)();
 
+// so 回调函数
+typedef void (*CallBack)();
+
 #endif
