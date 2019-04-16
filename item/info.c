@@ -8,3 +8,9 @@ int Hello(int num){
     BaseAdd();
     return 0;
 }
+
+void runCallBack(CallBack cb){
+    if(cb != NULL){
+        cb();
+    }
+}
